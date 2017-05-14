@@ -170,26 +170,20 @@ def verifyBlock(vblock):
         print ('Could not verify data')
         return 4
 
-
+#used for authentication, kept for future expansion
 def updateVoter(voter):
     #When blockchain has been verified, update voter
     #Change voterID to prevent revoting
     #Must call voter to regenerate ID
     pass
 
-
+#used for authentication, kept for future expansion
 def verifyVoter(self, voter):
-    #Disregard below. Use vID in symmetric encryption?
-    #Function should allow sign in
-
     #voter includes voterID, generated from email + timestamp
     #this is used to generate public/private key pair
 
     #Public key in email provides voter link to sign in
     #Decrypted with stored private key to reveal voterID, allow access if same
-
-    #Function needs to take key, vID, email
-    #    Decrypt key using
     pass
 
 #main process chain, hashes and saves block files
