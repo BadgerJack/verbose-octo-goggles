@@ -8,19 +8,16 @@ import pickle
 import os
 import argparse
 currpath = os.getcwd()
-#path = os.path.dirname(os.getcwd()) + "/resources"
+#location of chain repository
 path = os.path.join(os.path.dirname(os.getcwd()), "resources")
-#needs chain analysis
 a_dict = {'address':'','port':0}
 
 # Finds the latest block in the chain by analysing the height of blocks
 def getPreviousBlock():
     h = 0
-    # Cycles through files in current directory that match filetype
-    # Needs error checking
+    # Cycles through files in current repository that match filetype
     for fname in os.listdir(path=path):
         if fname.endswith(".blk"):
-            #fo = open(path + "/" + fname)
             fo = open(os.path.join(path, fname))
             # Skip the first 4 lines, as Height is on the fifth
             for skipline in range(0, 4):
@@ -31,9 +28,9 @@ def getPreviousBlock():
             h = int(line)
     return str(h)
 
-
+#generates a block from a given vote
 def makeBlock(ballot, voterID):
-    print("getPreviousBlock(): ")
+    print("Generating block from provided data")
     prevx = block.Block()
     prevx.load(getPreviousBlock())
 
@@ -44,25 +41,20 @@ def makeBlock(ballot, voterID):
     #    Hash of Previous
     #    VoterID
     #    Ballot
-    x.hash = "Error"
+    x.hash = "Error"  # if hashing fails, this is the default
     x.previousHash = prevx.hash
     x.height = prevx.height + 1
-    print (x.ballot)
     return x
 
-
+# generates hash checksum unique to current block
 def hashBlockData(block):
     hdata = str(block.ballot) + str(block.voterID) + str(block.height)
     computedHash = hashlib.md5(hdata.encode('utf-8')).hexdigest()
-    print("Block hash written as: ")
-    print(computedHash)
+    print("Block hash written as: %s" % computedHash)
     return computedHash
 
-
+#writes block data to repository
 def addBlockToChain(block):
-    #Open previous block file to locate hash
-    #block.previousHash = ""
-    #Save file to blockchain directory
     filename = path + '/' + str(block.height).strip() + '.blk'
     target = open(filename, 'w')
 
@@ -73,55 +65,48 @@ def addBlockToChain(block):
     target.write(str(block.hash))
     target.write('\n')
     target.write(str(block.previousHash))
-    # target.write('\n')
+    # target.write('\n')  prevents strange error with line gap in files
     target.write(str(block.height))
     target.write('\n')
     target.write(str(block.nonceValue))
-    print(block)
-    block.write()
+    #block.write()  for debugging purposes only
 
     target.close()
 
     print ("Block file written")
 
 
+#clears repository, used in updating chain
 def clearBlocks():
-    #only used when updating chain
     t_height = getPreviousBlock()
-    print(t_height)
-    print(path)
+    print("Clearing repository for update...")
     for fname in os.listdir(path=path):
         if fname.endswith(".blk"):
             if fname != "0.blk":
                 fpath = path + '/' + fname
                 os.remove(fpath)
 
+    print("...done!")
 
+
+#initial send logic, sends a new block created from site
 def transmit(b, b_dict):
-#create socket object
+    #create socket object
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sslContext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
     sslContext.set_ciphers("ADH-AES256-SHA")
     sslContext.load_dh_params("dhparam.pem")
     s = sslContext.wrap_socket(sock)
-    # s = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1, ciphers="ADH-AES256-SHA")
 
     #get local machine name
     #host = socket.gethostname()  # for local testing
-    # host = '192.168.0.17'       #works
-    # port = 9999
-
     host = b_dict['address']
     port = b_dict['port']
 
     #connection to hostname on port
     s.connect((host, port))
-    # s.send(b.ballot.encode('ascii'))
-    # s.send(b.voterID.encode('ascii'))
-    # s.send(b.hash.encode('ascii'))
-    # s.send(b.previousHash.encode('ascii'))
-    # s.send(str(b.height).encode('ascii'))
 
+    #prepare data for transfer
     msg_pickle = {
     'ballot':b.ballot.encode('ascii'),
     'voterID':b.voterID.encode('ascii'),
@@ -135,6 +120,7 @@ def transmit(b, b_dict):
     print("Message sent")
 
 
+#verify received block is legitimate
 def verifyBlock(vblock):
     #Read block height
     prevx = block.Block()
@@ -142,17 +128,18 @@ def verifyBlock(vblock):
     currentHeight = int(prevx.height)
     vheight = int(vblock.height)
 
-    #If same as current, check hash
-        #If same as current, chain is up to date, throw out block
-        #Update voter info
+    #error codes
     #0 == verified
     #1 == needs update
     #2 == source needs update (unused)
     #3 == chain reached completion
     #4 == file error; kill application
+
+    #If same as current, check hash
+        #If same as current, chain is up to date, throw out block
+        #Update voter info
     if currentHeight == vheight:
-        if str(prevx.hash).strip() == str(vblock.hash).strip(): # restore for testing
-        #if str(prevx.hash) == str(vblock.hash):
+        if str(prevx.hash).strip() == str(vblock.hash).strip():
             print ('Up to date')
             return 3
         else:
@@ -178,6 +165,7 @@ def verifyBlock(vblock):
             print(prevx.hash)
             return 1
 
+    #data is either corrupt or forged
     else:
         print ('Could not verify data')
         return 4
@@ -187,15 +175,6 @@ def updateVoter(voter):
     #When blockchain has been verified, update voter
     #Change voterID to prevent revoting
     #Must call voter to regenerate ID
-    pass
-
-
-def receiveVote(self, vote):
-    #Listening on application port
-    #Takes voterID + ballot [list]
-    #After vote, call updateVoter
-
-    #performed through listn.py
     pass
 
 
@@ -213,20 +192,8 @@ def verifyVoter(self, voter):
     #    Decrypt key using
     pass
 
-
-def startService(self):
-    #Begin listening on given port
-    #performed through listen.py
-    pass
-
-
-def endService(self):
-    #Close service
-    self.exit
-
-
+#main process chain, hashes and saves block files
 def main(block, r_ad, r_po):
-    #executes main command chain of program
     a_dict['address'] = r_ad
     a_dict['port'] = r_po
 
@@ -234,11 +201,9 @@ def main(block, r_ad, r_po):
     addBlockToChain(block)
     transmit(block, a_dict)
 
-
-
+# execute only if run as a script
 if __name__ == '__main__':
-    # execute only if run as a script
-    #parse arguments from command line
+    #command line arguments
     parser = argparse.ArgumentParser(description='Voting with Blockchains')
     parser.add_argument('-a', '--address', help='Target IP address of next machine', required = True)
     parser.add_argument('-p', '--port', help='Target port on next machine', type=int, required=True, default=9999)

@@ -101,6 +101,8 @@ def listen(args):
 
                         main.addBlockToChain(y)
 
+                    print("Repository updated")
+
                     #continues main process after updating
                     a_dict = {'address':args.updates,'port':args.port}
                     print("Transmitting to: %s" % args.updates)
