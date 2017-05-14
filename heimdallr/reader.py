@@ -20,7 +20,11 @@ if __name__ == '__main__':
         print("Processing all files...")
         for fname in os.listdir(path=path):
             if fname.endswith(".blk"):
-                process(fname)
+                fname = path + '/' + str(fname)
+                target = open(fname, 'r')
+                print("Processing %s" % fname)
+                process(target)
+                target.close()
         print("...done!")
 
     else:
