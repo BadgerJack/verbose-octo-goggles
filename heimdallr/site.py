@@ -7,7 +7,8 @@ import argparse
 t_dict = {'randnum':0, 'voter': '', 'ballot': '', 'height': ''}
 a_dict = {'address':'','port':0}
 
-
+#route holds the address being accessed, eg. localhost:8081/filename
+#these functions return static files, eg. stylesheets, images
 @route('/<filename>')
 def send_static(filename):
     return static_file(filename, root='./static/')
@@ -25,18 +26,18 @@ def send_docs(filename):
 def index():
     redirect('/login')
 
-
+#shortcut for '@route(type=get)'
+#function generates voterID while authentication unimplemented
 @get('/login')
 def login():
     randint = random.randrange(10000,99999)
     t_dict['randnum'] = randint
     return template('login', **t_dict)
 
-
+#shortcut for '@route(type=post)'
 @post('/login')
 def do_login():
     vid = request.forms.get('voterID')
-    # t_dict = {'vid':vid}
     redirect('/vote')
 
 
@@ -54,16 +55,17 @@ def about():
 def vote():
     return template('form', **t_dict)
 
-
+#takes vote data from form and processes through main file
 @post('/vote')
 def do_vote():
     voterID = request.forms.get('voterID')
     choice = request.forms.get('ballot')
-    print(voterID)
-    print(choice)
+    print("Vote data received")
+
     t_dict['voter'] = voterID
     t_dict['ballot'] = choice
     t_dict['height'] = ''
+
     x = main.makeBlock(choice, voterID)
     main.main(x, a_dict['address'], a_dict['port'])
     t_dict['height'] = x.height
@@ -72,14 +74,13 @@ def do_vote():
 
 if __name__ == '__main__':
     #regular execution parameters
-    #parse arguments from command line
+    #command line arguments
     parser = argparse.ArgumentParser(description='Voting with Blockchains')
     parser.add_argument('-a', '--address', help='Target IP address of next machine', required = True)
     parser.add_argument('-p', '--port', help='Target port on next machine', type=int, required=True, default=9999)
     args = parser.parse_args()
-    print(args)
+
     a_dict['address'] = args.address
     a_dict['port'] = args.port
-    print(a_dict)
 
     run(server='paste', port=8081, debug=True)
