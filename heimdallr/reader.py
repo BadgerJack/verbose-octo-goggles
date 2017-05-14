@@ -4,12 +4,7 @@ import os.path
 currpath = os.getcwd()
 path = os.path.join(os.path.dirname(os.getcwd()), "resources")
 
-
-if __name__ == '__main__':
-    x = input("Choose a block: ")
-    filename = path + '/' + str(x) + '.blk'
-    target = open(filename, 'r')
-
+def process(target):
     print("Ballot: ", target.readline())
     print("VoterID: ", target.readline())
     print("Hash: ", target.readline())
@@ -17,5 +12,20 @@ if __name__ == '__main__':
     print("Height: ", target.readline())
     print("Nonce: ", target.readline())
 
-    target.close()
-    print("End of File")
+
+if __name__ == '__main__':
+    x = input("Choose a block: ")
+
+    if x == "all":
+        print("Processing all files...")
+        for fname in os.listdir(path=path):
+            if fname.endswith(".blk"):
+                process(fname)
+        print("...done!")
+
+    else:
+        filename = path + '/' + str(x) + '.blk'
+        target = open(filename, 'r')
+        process(target)
+        target.close()
+        print("End of File")
