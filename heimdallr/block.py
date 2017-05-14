@@ -32,6 +32,7 @@ class Block:
 
         fo.close()
 
+    # for debugging functions only
     def write(self):
         print(self.ballot)
         print(self.voterID)
