@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5.1. Listener &#8212; Project Heimdallr 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="6. License" href="license.html" />
+    <link rel="prev" title="5. Files" href="files_toc.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><img class="rightlogo" src="_static/heimdall_icon_small.png" alt="Logo"/><h1 class="heading"><a href="index.html">
+          <span>Project Heimdallr 0.1 documentation</span></a></h1>
+        <h2 class="heading"><span>5.1. Listener</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="files_toc.html">5. Files</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="license.html">6. License</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="listener">
+<h1>5.1. Listener<a class="headerlink" href="#listener" title="Permalink to this headline">¶</a></h1>
+<p>The listener (listen.py) takes three arguments, and is used to set up communications between involved devices.</p>
+ <p>Usage: listen.py [-h] -a ADDRESS -u UPDATES -p PORT</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-a <var>ADDRESS</var></span>, <span class="option">--address <var>ADDRESS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>IP address of machine to listen to</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-u <var>UPDATES</var></span>, <span class="option">--updates <var>UPDATES</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>IP address of machine to send updates to</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>PORT</var></span>, <span class="option">--port <var>PORT</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Target port of listening devices</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>In effect, –address points to the previous device in the chain, whilst –update points to the next one. The used port should be higher than 100 to avoid administrator privileges [default=9999].</p>
+<dl class="function">
+<dt>
+<code class="descname">def listen(args)</code></dt>
+<dt>
+<code class="descname">listen has two branches for incoming connections.</code></dt>
+<dt>
+<code class="descname">Connections coming from the listening port --address are processed and verified from main.verifyBlock(x). Non-verification of block data results in returning an update request to the listening device.</code></dt>
+<dt>
+<code class="descname">Connections from --update are assumed to be update requests, and respond with an update method on the target device.</code></dt>
+<dt>
+<code class="descname">All other connections are dropped as a security measure.</code></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="site">
+<h1>5.2. Site<a class="headerlink" href="#site" title="Permalink to this headline">¶</a></h1>
+<p>The site host (site.py) takes two arguments, and hosts the digital voting application.</p>
+<p>Usage: site.py [-h] -a ADDRESS -p PORT</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-a <var>ADDRESS</var></span>, <span class="option">--address <var>ADDRESS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Target IP address of next machine</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>PORT</var></span>, <span class="option">--port <var>PORT</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Target port on next machine</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Here, –address points to the _next_ block in the chain, as this is where files will be sent. The port is _not_ that which hosts the site [default=8081], but rather the port on the listening device as above [default=9999].</p>
+<dl class="function">
+<dt>
+<code class="descname">def send_static(filename)</code></dt>
+<dt>
+<code class="descname">Returns a file from folder [static], such as images or stylesheets, for use in web pages</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def login()</code></dt>
+<dt>
+<code class="descname">Prefaced with &#64;get('/login'), this is the way web pages are served using bottle. Relevant calculations and variables are made, then served with a template from [views]</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def do_vote()</code></dt>
+<dt>
+<code class="descname">Prefaced with &#64;post('/vote'), this processes a post request from a page, such as the form on [/vote]. This request processes a user's vote based on the forms, and passes the information to main.makeBlock()</code></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="main">
+<h1>5.3. Main<a class="headerlink" href="#main" title="Permalink to this headline">¶</a></h1>
+<p>The (main.py) is the controller in a typical MVC/MOVE system. It contains the main functionality of the application. When running from the command line, use this instead of (site.py), with the same arguments.</p>
+<p>usage: main.py [-h] -a ADDRESS -p PORT</p>
+<dl class="docutils">
+<dt>Arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-a <var>ADDRESS</var></span>, <span class="option">--address <var>ADDRESS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Target IP address of next machine</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>PORT</var></span>, <span class="option">--port <var>PORT</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Target port on next machine</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<dl class="function">
+<dt>
+<code class="descname">def getPreviousBlock()</code></dt>
+<dt>
+<code class="descname">Cycles through files in [../resources] to read their file height, finding the latest block in the chain. Returns the height as a string.</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def makeBlock(ballot, voterID)</code></dt>
+<dt>
+<code class="descname">Takes variables from a form and generates a new block. Includes default information and calls getPreviousBlock() to find the height. Returns a block object.</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def hashBlockData(block)</code></dt>
+<dt>
+<code class="descname">Calculates an MD5 hash based on key information in the block. Returns the hash as a string.</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def addBlockToChain(block)</code></dt>
+<dt>
+<code class="descname">Writes a new block file into [../resources].</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def clearBlocks()</code></dt>
+<dt>
+<code class="descname">Used in updating files, when called deletes all blocks in [../resources] other than the genesis block.</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def transmit(b, b_dict)</code></dt>
+<dt>
+<code class="descname">Opens a TLS connection to the target host (stored in b_dict), and transmits a pickled dictionary containing block information.</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def verifyBlock(vblock)</code></dt>
+<dt>
+<code class="descname">Given a received block, opens the latest block in the current repository and compares them for discrepencies.</code></dt>
+<dt>
+<code class="descname">Returns an integer error code with the following pattern:</code></dt>
+<dt>
+<code class="descname">#0 == Data is verified</code></dt>
+<dt>
+<code class="descname">#1 == Host chain needs to update</code></dt>
+<dt>
+<code class="descname">#2 == Source device needs to update (Unused)</code></dt>
+<dt>
+<code class="descname">#3 == Block already processed (Chain is complete)</code></dt>
+<dt>
+<code class="descname">#4 == File error; Kill application</code></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">def main(block, r_ad, r_po)</code></dt>
+<dt>
+<code class="descname">Main process chain. Given a block through either command line or site forms, generates a hash for the block, stores the file, then transmits to the next host.</code></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="reader">
+<h1>5.4. Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h1>
+<p>The reader (reader.py) is a small script to enable easy access of blockchain files. When run, the reader will ask for a file number (this will have been provided by running the main application).</p>
+<p>Entering the file number will return an output of the file’s contents, then the reader will exit. This is purely for testing purposes, although may later be expanded into a working application.</p>
+<dl class="function">
+<dt>
+<code class="descname">def read(block)</code></dt>
+<dt>
+<code class="descname">Takes an input from command line and returns information from a relevant file.</code></dt>
+<dt>
+<code class="descname">Files are found in [../resources].</code></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="static-and-views">
+<h1>5.5. Static and Views<a class="headerlink" href="#static-and-views" title="Permalink to this headline">¶</a></h1>
+<p>Files in these folders are static images, stylesheets, and templates for the web pages.</p>
+</div>
+<div class="section" id="bottle">
+<h1>5.6. Bottle<a class="headerlink" href="#bottle" title="Permalink to this headline">¶</a></h1>
+<p>This is the service used for hosting web pages using python. It is included with the project to reduce installation requirements. Bottle is available at: <a class="reference external" href="https://github.com/bottlepy/bottle">https://github.com/bottlepy/bottle</a></p>
+</div>
+<div class="section" id="voter">
+<h1>5.7. Voter<a class="headerlink" href="#voter" title="Permalink to this headline">¶</a></h1>
+<p>This file contains sample information taken from a centralised voter database. As authentication is not yet implemented, this is currently unused.</p>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="files_toc.html">5. Files</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="license.html">6. License</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Jack Tolley.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
+    </div>
+  </body>
+</html>
