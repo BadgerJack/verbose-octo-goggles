@@ -10,6 +10,7 @@ import os.path
 
 path = os.path.join(os.path.dirname(os.getcwd()), "resources")
 
+
 # decision making logic for receiving connections
 def listen(args):
     #create socket object
@@ -55,7 +56,7 @@ def listen(args):
             #Verification successful, add to chain
             if main.verifyBlock(x) == 0:
                 main.addBlockToChain(x)
-                a_dict = {'address':args.updates,'port':args.port}
+                a_dict = {'address': args.updates, 'port': args.port}
                 print("Transmitting to: %s" % args.updates)
                 main.transmit(x, a_dict)
             #Chain is already up to date
@@ -77,7 +78,7 @@ def listen(args):
 
                     #connection to hostname on port
                     u.connect((host, port))
-                    msg_pickle = {'Update':'Value'}  # Dud value to act as signal for listening device
+                    msg_pickle = {'Update': 'Value'}  # Dud value to act as signal for listening device
 
                     #send update request back
                     u.send(pickle.dumps(msg_pickle))
@@ -104,7 +105,7 @@ def listen(args):
                     print("Repository updated")
 
                     #continues main process after updating
-                    a_dict = {'address':args.updates,'port':args.port}
+                    a_dict = {'address': args.updates, 'port': args.port}
                     print("Transmitting to: %s" % args.updates)
                     main.transmit(x, a_dict)
 
@@ -122,7 +123,7 @@ def listen(args):
 
             #collect chain files to update target
             for fname in os.listdir(path=path):
-                m_dict = {'ballot':'','voterID':'','hash':'','phash':'','height':'','nonce':'0'}
+                m_dict = {'ballot': '', 'voterID': '', 'hash': '', 'phash': '', 'height': '', 'nonce': '0'}
                 if fname.endswith(".blk"):
                     if fname != '0.blk':
                         fo = open(os.path.join(path, fname))
@@ -152,9 +153,17 @@ def listen(args):
 if __name__ == '__main__':
     #command line arguments
     parser = argparse.ArgumentParser(description='Voting with Blockchains')
-    parser.add_argument('-a', '--address', help='IP address of machine to listen to', required = True)
-    parser.add_argument('-u', '--updates', help='IP address of machine to send updates to', required=True)
-    parser.add_argument('-p', '--port', help='Target port of listening devices', type=int, required=True, default=9999)
+
+    parser.add_argument('-a', '--address',
+    help='IP address of machine to listen to', required=True)
+
+    parser.add_argument('-u', '--updates',
+    help='IP address of machine to send updates to', required=True)
+
+    parser.add_argument('-p', '--port',
+    help='Target port of listening devices',
+    type=int, const=1, nargs='?', default=9999)
+
     args = parser.parse_args()
 
     listen(args)

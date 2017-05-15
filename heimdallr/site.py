@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import main
-import paste
 from bottle import *
 import random
 import argparse
-t_dict = {'randnum':0, 'voter': '', 'ballot': '', 'height': ''}
-a_dict = {'address':'','port':0}
+t_dict = {'randnum': 0, 'voter': '', 'ballot': '', 'height': ''}
+a_dict = {'address': '', 'port': 0}
+
 
 #route holds the address being accessed, eg. localhost:8081/filename
 #these functions return static files, eg. stylesheets, images
@@ -13,12 +13,14 @@ a_dict = {'address':'','port':0}
 def send_static(filename):
     return static_file(filename, root='./static/')
 
+
 @route('/docs/<filename>')
 def send_docs(filename):
     return static_file(filename, root='../documentation/')
 
+
 @route('/docs/_static/<filename>')
-def send_docs(filename):
+def send_doc_static(filename):
     return static_file(filename, root='../documentation/_static/')
 
 
@@ -26,34 +28,36 @@ def send_docs(filename):
 def index():
     redirect('/login')
 
+
 #shortcut for '@route(type=get)'
 #function generates voterID while authentication unimplemented
 @get('/login')
 def login():
-    randint = random.randrange(10000,99999)
+    randint = random.randrange(10000, 99999)
     t_dict['randnum'] = randint
     return template('login', **t_dict)
+
 
 #shortcut for '@route(type=post)'
 @post('/login')
 def do_login():
-    vid = request.forms.get('voterID')
     redirect('/vote')
 
 
 @route('/contact')
 def contact():
-	return template('contact')
+    return template('contact')
 
 
 @route('/about')
 def about():
-	return template('about')
+    return template('about')
 
 
 @get('/vote')
 def vote():
     return template('form', **t_dict)
+
 
 #takes vote data from form and processes through main file
 @post('/vote')
@@ -76,8 +80,14 @@ if __name__ == '__main__':
     #regular execution parameters
     #command line arguments
     parser = argparse.ArgumentParser(description='Voting with Blockchains')
-    parser.add_argument('-a', '--address', help='Target IP address of next machine', required = True)
-    parser.add_argument('-p', '--port', help='Target port on next machine', type=int, required=True, default=9999)
+
+    parser.add_argument('-a', '--address',
+    help='Target IP address of next machine', required=True)
+
+    parser.add_argument('-p', '--port',
+    help='Target port on next machine',
+    type=int, nargs='?', const=1, default=9999)
+
     args = parser.parse_args()
 
     a_dict['address'] = args.address

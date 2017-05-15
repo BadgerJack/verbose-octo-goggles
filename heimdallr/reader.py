@@ -4,6 +4,7 @@ import os.path
 currpath = os.getcwd()
 path = os.path.join(os.path.dirname(os.getcwd()), "resources")
 
+
 def process(target):
     print("Ballot: ", target.readline())
     print("VoterID: ", target.readline())

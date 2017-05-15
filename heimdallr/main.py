@@ -10,7 +10,8 @@ import argparse
 currpath = os.getcwd()
 #location of chain repository
 path = os.path.join(os.path.dirname(os.getcwd()), "resources")
-a_dict = {'address':'','port':0}
+a_dict = {'address': '', 'port': 9999}
+
 
 # Finds the latest block in the chain by analysing the height of blocks
 def getPreviousBlock():
@@ -27,6 +28,7 @@ def getPreviousBlock():
         if int(line) > h:
             h = int(line)
     return str(h)
+
 
 #generates a block from a given vote
 def makeBlock(ballot, voterID):
@@ -46,12 +48,14 @@ def makeBlock(ballot, voterID):
     x.height = prevx.height + 1
     return x
 
+
 # generates hash checksum unique to current block
 def hashBlockData(block):
     hdata = str(block.ballot) + str(block.voterID) + str(block.height)
     computedHash = hashlib.md5(hdata.encode('utf-8')).hexdigest()
     print("Block hash written as: %s" % computedHash)
     return computedHash
+
 
 #writes block data to repository
 def addBlockToChain(block):
@@ -78,7 +82,6 @@ def addBlockToChain(block):
 
 #clears repository, used in updating chain
 def clearBlocks():
-    t_height = getPreviousBlock()
     print("Clearing repository for update...")
     for fname in os.listdir(path=path):
         if fname.endswith(".blk"):
@@ -108,11 +111,11 @@ def transmit(b, b_dict):
 
     #prepare data for transfer
     msg_pickle = {
-    'ballot':b.ballot.encode('ascii'),
-    'voterID':b.voterID.encode('ascii'),
-    'hash':b.hash.encode('ascii'),
-    'pHash':b.previousHash.encode('ascii'),
-    'height':str(b.height).encode('ascii')
+    'ballot': b.ballot.encode('ascii'),
+    'voterID': b.voterID.encode('ascii'),
+    'hash': b.hash.encode('ascii'),
+    'pHash': b.previousHash.encode('ascii'),
+    'height': str(b.height).encode('ascii')
     }
 
     s.send(pickle.dumps(msg_pickle))
@@ -170,12 +173,14 @@ def verifyBlock(vblock):
         print ('Could not verify data')
         return 4
 
+
 #used for authentication, kept for future expansion
 def updateVoter(voter):
     #When blockchain has been verified, update voter
     #Change voterID to prevent revoting
     #Must call voter to regenerate ID
     pass
+
 
 #used for authentication, kept for future expansion
 def verifyVoter(self, voter):
@@ -185,6 +190,7 @@ def verifyVoter(self, voter):
     #Public key in email provides voter link to sign in
     #Decrypted with stored private key to reveal voterID, allow access if same
     pass
+
 
 #main process chain, hashes and saves block files
 def main(block, r_ad, r_po):
@@ -199,8 +205,13 @@ def main(block, r_ad, r_po):
 if __name__ == '__main__':
     #command line arguments
     parser = argparse.ArgumentParser(description='Voting with Blockchains')
-    parser.add_argument('-a', '--address', help='Target IP address of next machine', required = True)
-    parser.add_argument('-p', '--port', help='Target port on next machine', type=int, required=True, default=9999)
+
+    parser.add_argument('-a', '--address',
+    help='Target IP address of next machine', required=True)
+
+    parser.add_argument('-p', '--port',
+    help='Target port on next machine', type=int, required=True, default=9999)
+
     args = parser.parse_args()
 
     print("Running from CLI in ", os.getcwd())
