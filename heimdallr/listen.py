@@ -6,6 +6,7 @@ import main
 import block
 import pickle
 import argparse
+import time
 import os.path
 
 path = os.path.join(os.path.dirname(os.getcwd()), "resources")
@@ -36,6 +37,7 @@ def listen(args):
         clientsocket, addr = serversocket.accept()
 
         print("got connection from %s" % str(addr))
+        x_t = time.perf_counter()
 
         #msg = 'Thank you for connecting' + "\r\n"
 
@@ -59,9 +61,15 @@ def listen(args):
                 a_dict = {'address': args.updates, 'port': args.port}
                 print("Transmitting to: %s" % args.updates)
                 main.transmit(x, a_dict)
+                y_t = time.perf_counter()
+                z_t = y_t - x_t
+                print("Block created and transmitted in: %f" % z_t)
             #Chain is already up to date
             elif main.verifyBlock(x) == 3:
                 print("Update success confirmed")
+                y_t = time.perf_counter()
+                z_t = y_t - x_t
+                print("Update successful in: %f" % z_t)
             #Error codes: Only accounts for error 1, currently
             else:
                 #update request, to be sent to previous host (arg.updates)
@@ -103,6 +111,9 @@ def listen(args):
                         main.addBlockToChain(y)
 
                     print("Repository updated")
+                    y_t = time.perf_counter()
+                    z_t = y_t - x_t
+                    print("Update completed in: %f" % z_t)
 
                     #continues main process after updating
                     a_dict = {'address': args.updates, 'port': args.port}
@@ -142,6 +153,9 @@ def listen(args):
             clientsocket.send(pickle.dumps(f_dict))
             print("Update file sent")
             clientsocket.close()
+            y_t = time.perf_counter()
+            z_t = y_t - x_t
+            print("Update delivered in: %f" % z_t)
 
         #connections from other sources should never be allowed
         else:

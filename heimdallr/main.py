@@ -6,6 +6,7 @@ import socket
 import ssl
 import pickle
 import os
+import time
 import argparse
 currpath = os.getcwd()
 #location of chain repository
@@ -196,10 +197,14 @@ def verifyVoter(self, voter):
 def main(block, r_ad, r_po):
     a_dict['address'] = r_ad
     a_dict['port'] = r_po
+    x_t = time.perf_counter()
 
     block.hash = hashBlockData(block)
     addBlockToChain(block)
     transmit(block, a_dict)
+    y_t = time.perf_counter()
+    z_t = y_t - x_t
+    print("Block created and transmitted in: %f" % z_t)
 
 # execute only if run as a script
 if __name__ == '__main__':
