@@ -93,4 +93,4 @@ if __name__ == '__main__':
     a_dict['address'] = args.address
     a_dict['port'] = args.port
 
-    run(server='paste', port=8081, debug=True)
+    run(server='paste', port=8081)
