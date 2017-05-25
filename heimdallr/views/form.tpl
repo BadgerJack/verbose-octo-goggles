@@ -67,8 +67,8 @@
 					  <label class="col-md-4 control-label" for="button1id"></label>
 					  <div class="col-md-8">
 						<button id="button1id" name="button1id" class="btn btn-success">Submit Vote</button>
-						<button id="button2id" name="button2id" class="btn btn-danger">Cancel Voting</button>
-					  </div>
+						<button id="button2id" name="button2id" type="button" onclick="location.href='/'" class="btn btn-danger">Cancel Voting</button>
+					</div>
 					</div>
 
 					</fieldset>

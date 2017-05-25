@@ -14,12 +14,11 @@
 		<div class="body">
 			<div class="details">
 				<fieldset>
-					<p>Thank you for submitting your choice.</p>
-					<p>Your voter ID is {{voter}}</p>
-					<p>You voted for {{ballot}}</p>
+					<p>Thank you for submitting your choice, voter number {{voter}}</p>
+					<br><br>
 
-					<p>Return to the command line and use 'reader.py'
-					to access file {{height}}</p>
+					<p>( Return to the command line and use 'reader.py'
+					to access file {{height}} )</p>
 				</fieldset>
 			</div>
 		</div>
